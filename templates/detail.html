@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <body>
+        <img src="{{ post.photo.url }}" alt="My image" class="img-fluid">
+        <h3>{{ post.title }}</h3>
+        <small>{{ post.author }}</small><br>
+        <small>{{ post.date }}</small><br>
+        <h2>{{ post.excerpt }}</h2>
+        <h3>{{ post.body }}</h3>
+
+        
+      {% if post.comment_set.count > 1 %}
+        <h4 class="comments-count">{{ post.comment_set.count }} Comments</h4>
+      {% else %}
+        <h4 class="comments-count">{{ post.comment_set.count }} Comment</h4>
+      {% endif %}
+
+      {% for comment in post.comment_set.all %}
+      <div id="comment-1" class="comment">
+        <div class="d-flex">
+          <div class="comment-img"><img src="{{ comment.author.photo.url }}" alt=""></div>
+          <div>
+            <h5>{{ comment.author }}</h5>
+            <time datetime="2020-01-01">{{ comment.date }}</time>
+            <p>{{ comment.body }}</p>
+          </div>
+        </div>
+      </div><!-- End comment #1 -->                                 
+    {% endfor %}
+
+
+      {% if user.is_authenticated %}
+        <div class="reply-form">
+        <h5>{{ user.username }} Leave a Reply</h5>
+        <p>Your email address will not be published. Required fields are marked </p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+          <input type="submit" value="Send">
+        </form>
+        
+        </div>
+      {% endif %}
+    
+    </body>
+{% endblock %}
