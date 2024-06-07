@@ -2,7 +2,7 @@ from typing import Any
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponseRedirect
 from django.views.generic import ListView,DetailView,TemplateView,FormView,View,CreateView
 from .models import Post,Comment
-from .forms import CommentForm
+from .forms import CommentForm,EditCommentForm
 from django.contrib import messages
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -49,9 +49,37 @@ class PostDetailView(View):
     
     def post(self,request,*args,**kwargs):
         view = CommentPost.as_view()
+        messages.success(request,'Your comment sent','success')
         return view(request,*args,**kwargs)
 
 
 
 class AboutUsView(TemplateView):
     template_name = 'aboutus.html'
+
+
+def edit_comment(request, pk):
+    comments = get_object_or_404(Comment, pk=pk)
+    if request.method == 'POST':
+        form = EditCommentForm(request.POST, instance=comments)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Your comment updated successfully','success')
+            return redirect('home')
+    else:
+        form = EditCommentForm(instance=comments)
+
+    context = {
+
+        'form': form,
+        'comments': comments,
+
+    }
+    return render(request, 'edit_comment.html', context)
+
+
+def delete_comment(request, pk):
+    comments = get_object_or_404(Comment, pk=pk)
+    comments.delete()
+    messages.success(request,'Your comment deleted successfully','success')
+    return redirect('home')
