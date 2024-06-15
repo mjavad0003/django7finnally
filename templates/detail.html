@@ -3,6 +3,7 @@
 {% block content %}
     <body>
         <img src="{{ post.photo.url }}" alt="My image" class="img-fluid">
+        <video src="{{ post.file.url }}"></video>
         <h3>{{ post.title }}</h3>
         <small>{{ post.author }}</small><br>
         <small>{{ post.date }}</small><br>
